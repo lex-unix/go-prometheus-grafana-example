@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-const port int = 8008
+const port int = 8080
 
 type User struct {
 	ID       int    `json:"id"`
@@ -55,6 +57,8 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("GET /users", getUsers)
 	http.HandleFunc("POST /users", addUser)
+
+	http.Handle("GET /metrics", promhttp.Handler())
 
 	log.Println("Server staring on port:", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
